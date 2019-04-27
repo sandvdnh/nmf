@@ -163,6 +163,6 @@ def solve(config, X):
 
         objective.append(np.linalg.norm(np.matmul(W, H) - X))
         if config['verbose']:
-            print('ERROR: ', objective[-1])
+            print('RESIDUAL: ', objective[-1])
         i += 1
     return W, H
