@@ -1,14 +1,17 @@
 ---
 name: dev
 solver: anls_bpp
-#path: /Users/sandervandenhaute/Documents/geometry/nmf/data/
+path: /Users/sandervandenhaute/Documents/geometry/nmf/data/
 #dirs:
 #    - ENSTDkAm
-dataset: 'synthetic'
+dataset: 'face'
 dataset_r: 'full'
 verbose: True
 n: 7
 m: 5
 r: 2
-iters: 3
+iters: 30
+nnls_iters: 10
+eps: 1.0e-7
+delay: 10
 ...

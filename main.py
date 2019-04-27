@@ -2,12 +2,13 @@ import argparse
 import os
 import yaml
 import numpy as np
-from data.data import get_data
+from data import get_data
 from solve import generate_nmf
 
 
 def main(config, args):
     X, ground_truth = get_data(config)
+    print('Data loaded, computing NMF...')
     W, H, log = generate_nmf(config, X)
     return 0
 
