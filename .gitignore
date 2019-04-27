@@ -1,0 +1,6 @@
+# Exclude files in ./datasets/
+data/*
+*.pdf
+
+# But keep one file, otherwise the directory won't sync
+!data/readme
