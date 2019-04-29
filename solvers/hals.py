@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 
 def init_(config, X):
@@ -33,9 +34,12 @@ def solve(config, X):
     i = 0
     stop = False
     objective = []
+    elapsed = []
+    l1_norm = []
 
     # initialize using ALS
     A, B = init_(config, X)
+    start = time.time()
     while not stop:
         if eps > 0:
             if i > delay:
@@ -45,7 +49,7 @@ def solve(config, X):
             if i >= iters:
                 stop = True
 
-        if config['use_new']:
+        if False:
             A_new = np.zeros(A.shape)
             B_new = np.zeros(B.shape)
             W = np.matmul(X.T, A)
@@ -80,10 +84,14 @@ def solve(config, X):
                 #if i > 10:
                 #    A[:, j] = A[:, j].clip(min=1e-10)
             #A = A / np.linalg.norm(A, axis=0)
-
-
+        elapsed.append(time.time() - start)
         objective.append(np.linalg.norm(np.matmul(A, B.T) - X))
+
         if config['verbose']:
             print('RESIDUAL: ', objective[-1])
         i += 1
-    return A, B.T
+    output = {
+            'objective': objective,
+            'time': elapsed,
+            'iterations': i}
+    return A, B.T, output

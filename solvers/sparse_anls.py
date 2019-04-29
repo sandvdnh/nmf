@@ -145,6 +145,8 @@ def solve(config, X):
     i = 0
     stop = False
     objective = []
+    elapsed = []
+    start = time.time()
     while not stop:
         if eps > 0:
             if i > delay:

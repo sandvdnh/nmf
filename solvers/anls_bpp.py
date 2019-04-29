@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 
 def divide(F_list, G_list, CTC, CTB):
@@ -131,7 +132,7 @@ def nnls(C, B, max_iters):
         #print(solved)
         #print(stop)
         #print('X and Y: ', X, Y)
-    print('NNLS ran for {} iterations'.format(i))
+    #print('NNLS ran for {} iterations'.format(i))
     return X, i
 
 def init_(config, X):
@@ -168,6 +169,8 @@ def solve(config, X):
     i = 0
     stop = False
     objective = []
+    elapsed = []
+    start = time.time()
     while not stop:
         if eps > 0:
             if i > delay:
@@ -187,7 +190,12 @@ def solve(config, X):
         H *= normalization.T
 
         objective.append(np.linalg.norm(np.matmul(W, H) - X))
+        elapsed.append(time.time() - start)
         if config['verbose']:
             print('RESIDUAL: ', objective[-1])
         i += 1
-    return W, H
+    output = {
+            'objective': objective,
+            'time': elapsed,
+            'iterations': i}
+    return W, H, output
