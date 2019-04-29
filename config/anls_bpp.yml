@@ -1,0 +1,17 @@
+---
+name: dev
+solver: anls_bpp
+path: /Users/sandervandenhaute/Documents/geometry/nmf/data/
+#dirs:
+#    - ENSTDkAm
+dataset: 'synthetic'
+dataset_r: 'full'
+verbose: True
+n: 800
+m: 600
+r: 10
+iters: 100
+nnls_iters: 10
+eps: 0
+delay: 10
+...

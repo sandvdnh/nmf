@@ -82,10 +82,9 @@ def nnls(C, B, max_iters):
     beta = (q + 1) * np.ones(r)
     solved = np.array([False for i in range(r)])
 
-    while not stop:
+    while i < max_iters and not stop:
         # determine V_hat
         #print('BEFORE ANYTHING: ', Y)
-        #print('NEXT ITER')
         for j in range(r):
             #print(X[j])
             #print(Y[j])
@@ -117,44 +116,21 @@ def nnls(C, B, max_iters):
                     #print('SOLUTION FOUND FOR COLUMN: ', j)
                     solved[j] = True
         # update X
-        #print('SETTING UP PROBLEMS')
         problems = divide(F_list, G_list, CTC, CTB)
-        #print('UPDATING PROBLEMS...')
         for problem in problems:
             #print("PROBLEM with indices: ", problem[-1])
             X, Y, stop = update(problem, X, Y, F_list, G_list)
         # check if stop criterion is met
         i += 1
-        #print(solved.shape)
-        stop = np.all(solved)
-        #print(np.where(solved == False))
-        #print(solved)
-        #print(stop)
         #print('X and Y: ', X, Y)
-    print('NNLS ran for {} iterations'.format(i))
+    #print('NNLS ran for {} iterations'.format(i))
     return X, i
 
-def init_(config, X):
-    '''
-    returns initialized W and H matrices based on the ALS method.
-    '''
-    n = X.shape[0]
-    r = config['r']
-    W = np.abs(np.random.normal(loc=0, scale=2, size=(n, r)))
-    WTW = np.matmul(W.T, W)
-    H = np.matmul(np.matmul(np.linalg.inv(WTW), W.T), X)
-    H = H.clip(min=0)
-    HHT = np.matmul(H, H.T)
-    W = np.transpose(np.matmul(np.matmul(np.linalg.inv(HHT), H), X.T))
-    W = W.clip(min=0)
-    W /= np.linalg.norm(W, axis=0)
-    return W, H
 
 def solve(config, X):
     '''
-    ANLS-BPP procedure
+    Sparse ANLS-BPP procedure
     '''
-    print('RUNNING ANLS-BPP...')
     iters = config['iters']
     r = config['r']
     nnls_iters = config['nnls_iters']
@@ -162,9 +138,10 @@ def solve(config, X):
     delay = config['delay']
     iters = config['iters']
     n, m = X.shape
+    beta = config['beta']
+    eta = config['eta']
 
-    _, H = init_(config, X)
-    #H = np.abs(np.random.normal(loc=0, scale=2, size=(r, m)))
+    H = np.abs(np.random.normal(loc=0, scale=2, size=(r, m)))
     i = 0
     stop = False
     objective = []
@@ -176,10 +153,18 @@ def solve(config, X):
         else:
             if i >= iters:
                 stop = True
-        WT, _ = nnls(H.T, X.T, nnls_iters)
-        #print(WT)
+        block = np.sqrt(eta) * np.identity(r)
+        A = np.concatenate((H.T, block), axis=0)
+        block_ = np.zeros((r, n))
+        B = np.concatenate((X.T, block_), axis=0)
+        WT, _ = nnls(A, B, nnls_iters)
+
         W = WT.T
-        H, _ = nnls(W, X, nnls_iters)
+        vect = np.sqrt(beta) * np.ones(r)
+        vect = np.reshape(vect, (1, r))
+        A = np.concatenate((W, vect), axis=0)
+        B = np.concatenate((X, np.zeros((1, m))), axis=0)
+        H, _ = nnls(A, B, nnls_iters)
         #print(H)
         normalization = np.linalg.norm(W, axis=0).reshape((1, r))
         #print(normalization)

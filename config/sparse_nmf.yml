@@ -1,0 +1,15 @@
+---
+name: dev
+solver: sparse_nmf
+path: /Users/sandervandenhaute/Documents/geometry/nmf/data/
+#dirs:
+#    - ENSTDkAm
+dataset: 'face'
+dataset_r: 'full'
+verbose: True
+r: 2
+iters: 10
+nnls_iters: 10
+eps: 1.0e-4
+delay: 10
+...

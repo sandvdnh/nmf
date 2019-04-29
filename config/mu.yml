@@ -1,0 +1,13 @@
+---
+name: dev
+solver: mu
+path: /Users/sandervandenhaute/Documents/geometry/nmf/data/
+#dirs:
+#    - ENSTDkAm
+dataset: 'synthetic'
+verbose: True
+n: 800
+m: 600
+r: 10
+iters: 10000
+...

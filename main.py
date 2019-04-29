@@ -8,6 +8,7 @@ from solve import generate_nmf
 
 def main(config, args):
     X, ground_truth = get_data(config)
+    print(X.shape)
     print('Data loaded, computing NMF...')
     W, H, log = generate_nmf(config, X)
     return 0
@@ -15,7 +16,7 @@ def main(config, args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='dev2')
+    parser.add_argument('--config', default='hals')
     args = parser.parse_args()
 
     # load config file

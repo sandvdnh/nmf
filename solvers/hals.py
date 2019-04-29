@@ -14,12 +14,14 @@ def init_(config, X):
     HHT = np.matmul(H, H.T)
     W = np.transpose(np.matmul(np.matmul(np.linalg.inv(HHT), H), X.T))
     W = W.clip(min=0)
+    W /= np.linalg.norm(W, axis=0)
     return W, H.T
 
 def solve(config, X):
     '''
     HALS procedure
     '''
+    print('RUNNING HALS...')
     iters = config['iters']
     r = config['r']
     #nnls_iters = config['nnls_iters']
@@ -42,23 +44,43 @@ def solve(config, X):
         else:
             if i >= iters:
                 stop = True
-        A_new = np.zeros(A.shape)
-        B_new = np.zeros(B.shape)
-        W = np.matmul(X.T, A)
-        V = np.matmul(A.T, A)
-        for j in range(r):
-            B_new[:, j] = B[:, j] + W[:, j] - np.dot(B, V[:, j])
-        if i > 10:
-            B_new = B_new.clip(min=1e-6)
-        B = B_new
-        P = np.matmul(X, B)
-        Q = np.matmul(B.T, B)
-        for j in range(r):
-            A_new[:, j] = A[:, j] * Q[j, j] + P[:, j] - np.dot(A, Q[:, j])
-        #print(A_new)
-        if i > 10:
-            A_new = A_new.clip(min=1e-6)
-        A = A_new / np.linalg.norm(A_new, axis=0)
+
+        if config['use_new']:
+            A_new = np.zeros(A.shape)
+            B_new = np.zeros(B.shape)
+            W = np.matmul(X.T, A)
+            V = np.matmul(A.T, A)
+            for j in range(r):
+                B_new[:, j] = B[:, j] + W[:, j] - np.dot(B, V[:, j])
+            if i > 10:
+                B_new = B_new.clip(min=1e-10)
+            B = B_new
+            P = np.matmul(X, B)
+            Q = np.matmul(B.T, B)
+            for j in range(r):
+                A_new[:, j] = A[:, j] * Q[j, j] + P[:, j] - np.dot(A, Q[:, j])
+            #print(A_new)
+            if i > 10:
+                A_new = A_new.clip(min=1e-10)
+            A = A_new / np.linalg.norm(A_new, axis=0)
+        else:
+            W = np.matmul(X.T, A)
+            V = np.matmul(A.T, A)
+            for j in range(r):
+                vec = B[:, j] + W[:, j] - np.dot(B, V[:, j])
+                B[:, j] = np.maximum(vec, 1e-16)
+                #if i > 10:
+                #    B[:, j] = B[:, j].clip(min=1e-10)
+            P = np.matmul(X, B)
+            Q = np.matmul(B.T, B)
+            for j in range(r):
+                vec = A[:, j] * Q[j, j] + P[:, j] - np.dot(A, Q[:, j])
+                A[:, j] = np.maximum(vec, 1e-10)
+                A[:, j] /= np.linalg.norm(A[:, j])
+                #if i > 10:
+                #    A[:, j] = A[:, j].clip(min=1e-10)
+            #A = A / np.linalg.norm(A, axis=0)
+
 
         objective.append(np.linalg.norm(np.matmul(A, B.T) - X))
         if config['verbose']:

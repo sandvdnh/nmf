@@ -7,9 +7,11 @@ path: /Users/sandervandenhaute/Documents/geometry/nmf/data/
 dataset: 'face'
 dataset_r: 'full'
 verbose: True
-r: 2
+r: 10
 iters: 10
 nnls_iters: 10
 eps: 1.0e-4
 delay: 10
+beta: 0
+eta: 0
 ...
