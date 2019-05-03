@@ -4,13 +4,16 @@ name: dev
 path: /Users/sandervandenhaute/Documents/geometry/nmf/data/
 #dirs:
 #    - ENSTDkAm
+log:
+  - time
+  - objective
+  - error
 r: 8
 verbose: True
-iters: 1000
-nnls_iters: 10
+iters: 100
 eps: 0
 delay: 10
-logger:
-    - objective
-    - l2
+# when running anls_bpp_sparse, beta and eta are parameters
+eta: 0
+beta: 0.1
 ...

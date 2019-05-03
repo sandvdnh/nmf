@@ -122,6 +122,7 @@ def nnls(C, B, max_iters):
             X, Y, stop = update(problem, X, Y, F_list, G_list)
         # check if stop criterion is met
         i += 1
+        stop = np.all(solved)
         #print('X and Y: ', X, Y)
     #print('NNLS ran for {} iterations'.format(i))
     return X, i
@@ -155,18 +156,6 @@ def solve(config, X):
         else:
             if i >= iters:
                 stop = True
-        block = np.sqrt(eta) * np.identity(r)
-        A = np.concatenate((H.T, block), axis=0)
-        block_ = np.zeros((r, n))
-        B = np.concatenate((X.T, block_), axis=0)
-        WT, _ = nnls(A, B, nnls_iters)
-
-        W = WT.T
-        vect = np.sqrt(beta) * np.ones(r)
-        vect = np.reshape(vect, (1, r))
-        A = np.concatenate((W, vect), axis=0)
-        B = np.concatenate((X, np.zeros((1, m))), axis=0)
-        H, _ = nnls(A, B, nnls_iters)
         #print(H)
         normalization = np.linalg.norm(W, axis=0).reshape((1, r))
         #print(normalization)

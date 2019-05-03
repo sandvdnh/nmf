@@ -84,8 +84,8 @@ def solve(config, X):
                 #if i > 10:
                 #    A[:, j] = A[:, j].clip(min=1e-10)
             #A = A / np.linalg.norm(A, axis=0)
-        elapsed.append(time.time() - start)
         objective.append(np.linalg.norm(np.matmul(A, B.T) - X))
+        elapsed.append(time.time() - start)
 
         if config['verbose']:
             print('RESIDUAL: ', objective[-1])

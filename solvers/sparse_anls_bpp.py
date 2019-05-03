@@ -1,9 +1,5 @@
 import numpy as np
 import time
-import os, sys
-sys.path.append('/Users/sandervandenhaute/Documents/geometry/nmf')
-import solve
-#sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(solve.py))))
 
 
 def divide(F_list, G_list, CTC, CTB):
@@ -159,13 +155,15 @@ def solve(config, X):
     '''
     ANLS-BPP procedure
     '''
-    print('RUNNING ANLS-BPP...')
+    print('RUNNING SPARSE ANLS-BPP...')
     iters = config['iters']
     r = config['r']
     eps = config['eps']
     delay = config['delay']
     iters = config['iters']
+    eta = config['eta']
     n, m = X.shape
+    beta = config['beta'] / (r * m)
 
     _, H = init_(config, X)
     #H = np.abs(np.random.normal(loc=0, scale=2, size=(r, m)))
@@ -182,25 +180,40 @@ def solve(config, X):
         else:
             if i >= iters:
                 stop = True
-        WT, _ = nnls(H.T, X.T)
+        #WT, _ = nnls(H.T, X.T)
         #print(WT)
+        #W = WT.T
+        #H, _ = nnls(W, X)
+
+        block = np.sqrt(2 * eta) * np.identity(r)
+        A = np.concatenate((H.T, block), axis=0)
+        block_ = np.zeros((r, n))
+        B = np.concatenate((X.T, block_), axis=0)
+        WT, _ = nnls(A, B)
+
         W = WT.T
-        H, _ = nnls(W, X)
-        #print(H)
+        vect = np.sqrt(2 * beta) * np.ones(r)
+        vect = np.reshape(vect, (1, r))
+        A = np.concatenate((W, vect), axis=0)
+        B = np.concatenate((X, np.zeros((1, m))), axis=0)
+        H, _ = nnls(A, B)
+
         normalization = np.linalg.norm(W, axis=0).reshape((1, r))
-        #print(normalization)
         W /= normalization
         H *= normalization.T
 
         elapsed.append(time.time() - start)
-        objective.append(np.linalg.norm(np.matmul(W, H) - X))
+        a = np.linalg.norm(np.matmul(W, H) - X)
+        b = np.linalg.norm(H, ord=1, axis=0)
+        objective.append((a, np.linalg.norm(b) ** 2))
         if config['verbose']:
-            print('RESIDUAL: ', objective[-1])
-            print('L1 norm H: ', np.linalg.norm(H, ord=1))
+            print('OBJECTIVE: ', 1/2 * objective[-1][0] + objective[-1][1] * beta)
+            print('ERROR: ', objective[-1][0])
         i += 1
     output = {
             'objective': objective,
             'time': elapsed,
             'iterations': i}
     return W, H, output
+
 
