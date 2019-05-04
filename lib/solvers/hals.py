@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from .solver import Solver
+from lib.solver import Solver
 
 
 class HALS(Solver):
@@ -9,6 +9,7 @@ class HALS(Solver):
     '''
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
+        self.name = 'hals'
         print('HALS object created!')
 
     def _update_WH(self, W, H):

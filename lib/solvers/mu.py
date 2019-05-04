@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import math
-from .solver import Solver
+from lib.solver import Solver
 
 class MU(Solver):
     '''
@@ -9,6 +9,7 @@ class MU(Solver):
     '''
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
+        self.name = 'mu'
         print('MU solver created!')
 
     def _update_WH(self, W, H):

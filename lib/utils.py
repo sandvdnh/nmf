@@ -69,3 +69,19 @@ def get_data(config):
     if config['dataset'] == 'face':
         X, ground_truth = face(config)
     return X, ground_truth
+
+
+def compute_nmf(config, X):
+    '''
+    Generates Solver object from correct subclass, and computes the NMF
+    '''
+    if config['solver'] == 'anls_bpp':
+        solver = ANLSBPP(config, X)
+        solver.solve()
+    elif config['solver'] == 'hals':
+        solver = HALS(config, X)
+        solver.solve()
+    elif config['solver'] == 'mu':
+        solver = MU(config, X)
+        solver.solve()
+    return 0

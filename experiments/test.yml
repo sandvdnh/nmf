@@ -1,0 +1,13 @@
+---
+name: test
+solver_list:
+  - anls_bpp
+  - hals
+  - mu
+features:
+  - error
+figsize:
+  - 6.4
+  - 4
+across_time: True
+...
