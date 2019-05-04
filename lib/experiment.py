@@ -19,6 +19,12 @@ class Experiment(object):
         solver_list = experiment_config['solver_list']
         features = experiment_config['features']
         self.solvers = []
+        # Add features to config['log']
+        print(config['log'])
+        log_set = set(config['log'])
+        log_set = log_set | set(features)
+        config['log'] = list(log_set)
+        print(config['log'])
         for method in solver_list:
             if method == 'anls_bpp':
                 solver = ANLSBPP(config, X)

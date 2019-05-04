@@ -5,7 +5,6 @@ solver_list:
   - hals
   - mu
 features:
-  - error
   - L1_H
 figsize:
   - 6.4

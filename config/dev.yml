@@ -6,7 +6,6 @@ log:
   - objective
   - error
   - iteration
-  - L1_H
 r: 8
 verbose: 20
 iters: 3000
