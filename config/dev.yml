@@ -6,9 +6,10 @@ log:
   - objective
   - error
   - iteration
+  - L1_H
 r: 8
-verbose: False
-iters: 100
+verbose: 20
+iters: 3000
 eps: 0
 delay: 10
 eta: 0

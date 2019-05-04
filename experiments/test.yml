@@ -6,8 +6,9 @@ solver_list:
   - mu
 features:
   - error
+  - L1_H
 figsize:
   - 6.4
   - 4
-across_time: True
+across_time: False
 ...
