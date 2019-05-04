@@ -27,7 +27,7 @@ class Experiment(object):
             elif method == 'mu':
                 solver = MU(config, X)
             self.solvers.append(solver)
-        self.features = features.append('time').append('iteration')
+        self.features = features + ['time', 'iteration']
         self.data = [] # each list in this list corresponds to a feature in self.features
 
         self.figsize = experiment_config['figsize']
@@ -42,7 +42,7 @@ class Experiment(object):
         for solver in self.solvers:
             print('Executing ', solver.name, '...')
             solver.solve()
-        for feature in features[:-2]:
+        for feature in self.features[:-2]:
             data_entry = [solver.output[feature] for solver in self.solvers]
             self.data.append(data_entry)
 
@@ -64,12 +64,15 @@ class Experiment(object):
             else:
                 x_axis = self.solvers[i].output['iteration']
                 ax0.set_xlabel('iteration')
-            ax0.plot(x_axis, vector, label=self.solvers[i].name, color=color[i])
+            ax0.plot(np.array(x_axis) + 1, vector, label=self.solvers[i].name, color=color[i])
         ax0.yaxis.set_major_formatter(FormatStrFormatter('%g'))
         ax0.xaxis.set_major_formatter(FormatStrFormatter('%g'))
         ax0.get_yaxis().set_tick_params(which='both', direction='in')
         ax0.get_xaxis().set_tick_params(which='both', direction='in')
         ax0.set_ylabel(feature)
+        ax0.legend()
+        ax0.set_xscale('log')
+        ax0.set_yscale('log')
         fig.savefig('./experiments/' + self.name + '/' + feature + '.pdf', bbox_inches='tight')
 
 
@@ -79,4 +82,4 @@ class Experiment(object):
         '''
         self.run()
         for feature in self.features[:-2]:
-            self._plot_feature(self, feature)
+            self._plot_feature(feature)

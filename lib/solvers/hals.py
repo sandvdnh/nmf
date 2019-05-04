@@ -10,7 +10,7 @@ class HALS(Solver):
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
         self.name = 'hals'
-        print('HALS object created!')
+        print('HALS solver created!')
 
     def _update_WH(self, W, H):
         A = W

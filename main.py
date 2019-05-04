@@ -8,9 +8,10 @@ from lib.experiment import Experiment
 
 def main(config, args, experiment_config={}):
     X, ground_truth = get_data(config)
-    print('Data loaded, computing NMF...')
+    print('Data loaded')
     #compute_nmf(config, X)
     experiment = Experiment(config, X, experiment_config)
+    experiment()
     return 0
 
 

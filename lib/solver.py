@@ -20,7 +20,6 @@ class Solver(object, metaclass=ABCMeta):
         # initialize output dictionary
         self.output = {}
         for key in self.config['log']:
-            print(key)
             self.output[key] = []
 
 
@@ -39,6 +38,8 @@ class Solver(object, metaclass=ABCMeta):
         stop = False
         start = time.time()
         i = 0
+        elapsed = 0
+        self.log(W, H, elapsed, i)
         while not stop:
             if eps > 0:
                 if i > delay:
