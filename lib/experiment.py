@@ -6,6 +6,9 @@ from lib.solver import Solver
 from lib.solvers.anls_bpp import ANLSBPP
 from lib.solvers.hals import HALS
 from lib.solvers.mu import MU
+from lib.solvers.sparse_hals import SparseHALS
+from lib.solvers.sparse_anls_bpp import SparseANLSBPP
+from lib.solvers.sparse_hoyer import SparseHoyer
 
 class Experiment(object):
     '''
@@ -20,11 +23,9 @@ class Experiment(object):
         features = experiment_config['features']
         self.solvers = []
         # Add features to config['log']
-        print(config['log'])
         log_set = set(config['log'])
         log_set = log_set | set(features)
         config['log'] = list(log_set)
-        print(config['log'])
         for method in solver_list:
             if method == 'anls_bpp':
                 solver = ANLSBPP(config, X)
@@ -32,6 +33,12 @@ class Experiment(object):
                 solver = HALS(config, X)
             elif method == 'mu':
                 solver = MU(config, X)
+            elif method == 'sparse_hals':
+                solver = SparseHALS(config, X)
+            elif method == 'sparse_anls_bpp':
+                solver = SparseANLSBPP(config, X)
+            elif method == 'sparse_hoyer':
+                solver = SparseHoyer(config, X)
             self.solvers.append(solver)
         self.features = features + ['time', 'iteration']
         self.data = [] # each list in this list corresponds to a feature in self.features
@@ -70,15 +77,15 @@ class Experiment(object):
             else:
                 x_axis = self.solvers[i].output['iteration']
                 ax0.set_xlabel('iteration')
-            ax0.plot(np.array(x_axis) + 1, vector, label=self.solvers[i].name, color=color[i])
+            ax0.plot(np.array(x_axis), vector, label=self.solvers[i].name, color=color[i])
         ax0.yaxis.set_major_formatter(FormatStrFormatter('%g'))
         ax0.xaxis.set_major_formatter(FormatStrFormatter('%g'))
         ax0.get_yaxis().set_tick_params(which='both', direction='in')
         ax0.get_xaxis().set_tick_params(which='both', direction='in')
         ax0.set_ylabel(feature)
         ax0.legend()
-        ax0.set_xscale('log')
-        ax0.set_yscale('log')
+        #ax0.set_xscale('log')
+        #ax0.set_yscale('log')
         fig.savefig('./experiments/' + self.name + '/' + feature + '.pdf', bbox_inches='tight')
 
 
@@ -87,5 +94,6 @@ class Experiment(object):
         Executes all solvers, and generates all features
         '''
         self.run()
+        print(self.features)
         for feature in self.features[:-2]:
             self._plot_feature(feature)

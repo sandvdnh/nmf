@@ -1,11 +1,14 @@
 ---
 name: test
 solver_list:
+  - sparse_hoyer
   - anls_bpp
-  - hals
-  - mu
+  - sparse_hals
+  - sparse_anls_bpp
 features:
   - L1_H
+  - objective
+  - error
 figsize:
   - 6.4
   - 4

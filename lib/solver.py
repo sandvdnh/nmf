@@ -40,6 +40,7 @@ class Solver(object, metaclass=ABCMeta):
         i = 0
         elapsed = 0
         self.log(W, H, elapsed, i)
+        self._update_objective(W, H)
         while not stop:
             if eps > 0:
                 if i > delay:
@@ -55,7 +56,7 @@ class Solver(object, metaclass=ABCMeta):
             self.log(W, H, elapsed, i)
             if self.config['verbose']:
                 if not i % self.config['verbose']:
-                    print('ITERATION ', i, '  ERROR: ', self.output['error'][-1])
+                    print('ITERATION ', i, '  OBJECTIVE: ', self.output['error'][-1])
             i += 1
 
         self.solution = (W, H)

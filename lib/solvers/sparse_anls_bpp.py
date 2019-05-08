@@ -1,24 +1,28 @@
 import numpy as np
 from lib.solver import Solver
 
-
-class ANLSBPP(Solver):
+class SparseANLSBPP(Solver):
     '''
-    Solver subclass that implements the ANLS-BPP algorithm
+    Solver subclass that implements the sparse version of the ANLS_BPP algorithm
     '''
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
-        self.name = 'anls_bpp'
-        print('ANLSBPP solver created!')
+        self.name = 'sparse_anls_bpp'
+        self.alpha = config['alpha'] / 10
+        print('SparseANLSBPP solver created!')
 
     def _update_WH(self, W, H):
         '''
         updates W and H
         '''
-        WT, _ = ANLSBPP.nnls(H.T, self.X.T)
-        #print(WT)
+        WT, _ = SparseANLSBPP.nnls(H.T, self.X.T)
+
         W = WT.T
-        H, _ = ANLSBPP.nnls(W, self.X)
+        vect = np.sqrt(self.alpha) * np.ones(self.r)
+        vect = np.reshape(vect, (1, self.r))
+        A = np.concatenate((W, vect), axis=0)
+        B = np.concatenate((self.X, np.zeros((1, self.m))), axis=0)
+        H, _ = SparseANLSBPP.nnls(A, B)
         #print(H)
         normalization = np.linalg.norm(W, axis=0).reshape((1, self.r))
         #print(normalization)
@@ -30,7 +34,7 @@ class ANLSBPP(Solver):
         '''
         calculates the value of the objective function
         '''
-        a = np.linalg.norm(np.matmul(W, H) - self.X)
+        a = np.linalg.norm(np.matmul(W, H) - self.X) + self.alpha * np.linalg.norm(np.linalg.norm(H, axis=1, ord=1)) ** 2
         self.objective.append(a)
 
     def divide(F_list, G_list, CTC, CTB):
@@ -150,11 +154,11 @@ class ANLSBPP(Solver):
                         solved[j] = True
             # update X
             #print('SETTING UP PROBLEMS')
-            problems = ANLSBPP.divide(F_list, G_list, CTC, CTB)
+            problems = SparseANLSBPP.divide(F_list, G_list, CTC, CTB)
             #print('UPDATING PROBLEMS...')
             for problem in problems:
                 #print("PROBLEM with indices: ", problem[-1])
-                X, Y, stop = ANLSBPP.update(problem, X, Y, F_list, G_list)
+                X, Y, stop = SparseANLSBPP.update(problem, X, Y, F_list, G_list)
             # check if stop criterion is met
             i += 1
             #print(solved.shape)
@@ -165,69 +169,3 @@ class ANLSBPP(Solver):
             #print('X and Y: ', X, Y)
         #print('NNLS ran for {} iterations'.format(i))
         return X, i
-
-#def init_(config, X):
-#    '''
-#    returns initialized W and H matrices based on the ALS method.
-#    '''
-#    n = X.shape[0]
-#    r = config['r']
-#    W = np.abs(np.random.normal(loc=0, scale=2, size=(n, r)))
-#    WTW = np.matmul(W.T, W)
-#    H = np.matmul(np.matmul(np.linalg.inv(WTW), W.T), X)
-#    H = H.clip(min=0)
-#    HHT = np.matmul(H, H.T)
-#    W = np.transpose(np.matmul(np.matmul(np.linalg.inv(HHT), H), X.T))
-#    W = W.clip(min=0)
-#    W /= np.linalg.norm(W, axis=0)
-#    return W, H
-#
-#def solve(config, X):
-#    '''
-#    ANLS-BPP procedure
-#    '''
-#    print('RUNNING ANLS-BPP...')
-#    iters = config['iters']
-#    r = config['r']
-#    eps = config['eps']
-#    delay = config['delay']
-#    iters = config['iters']
-#    n, m = X.shape
-#
-#    _, H = init_(config, X)
-#    #H = np.abs(np.random.normal(loc=0, scale=2, size=(r, m)))
-#    i = 0
-#    stop = False
-#    objective = []
-#    elapsed = []
-#    start = time.time()
-#    while not stop:
-#        if eps > 0:
-#            if i > delay:
-#                if np.abs(objective[i - delay] - objective[i - 1]) < eps:
-#                    stop = True
-#        else:
-#            if i >= iters:
-#                stop = True
-#        WT, _ = nnls(H.T, X.T)
-#        #print(WT)
-#        W = WT.T
-#        H, _ = nnls(W, X)
-#        #print(H)
-#        normalization = np.linalg.norm(W, axis=0).reshape((1, r))
-#        #print(normalization)
-#        W /= normalization
-#        H *= normalization.T
-#
-#        elapsed.append(time.time() - start)
-#        objective.append(np.linalg.norm(np.matmul(W, H) - X))
-#        if config['verbose']:
-#            print('RESIDUAL: ', objective[-1])
-#            print('L1 norm H: ', np.linalg.norm(H, ord=1))
-#        i += 1
-#    output = {
-#            'objective': objective,
-#            'time': elapsed,
-#            'iterations': i}
-#    return W, H, output
-
