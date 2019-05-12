@@ -41,6 +41,8 @@ class SparseHoyer(Solver):
         '''
         calculates the value of the objective function
         '''
+        a = 1/2 * np.linalg.norm(np.matmul(W, H) - self.X) ** 2
+        self.objective.append(a)
         pass
 
     def init_WH(self):
@@ -70,6 +72,7 @@ class SparseHoyer(Solver):
             l2 = np.linalg.norm(vect)
             l1 = l1_(l2)
             M[:, i] = SparseHoyer._project(vect, l1, l2)
+            #print('Sparsity level of column: ', SparseHoyer._get_sparsity(M[:, i]))
         return M
 
 
@@ -80,22 +83,27 @@ class SparseHoyer(Solver):
         '''
         s = x + (l1 - np.sum(x))/len(x)
         Z = set()
-        for i in range(len(x)):
+        all_ = set(range(len(x)))
+        i = 0
+        while i <= 3 * len(x):
             m = np.zeros(len(x))
-            m[list(Z)] = l1 / (len(x) - len(Z))
-            alpha = SparseHoyer.get_alpha(s, m, l2)
+            m[list(all_ - Z)] = l1 / (len(x) - len(Z))
+            alpha = SparseHoyer._get_alpha(s, m, l2)
             s = m + alpha * (s - m)
-            if np.all(s >= 0):
+            if np.all(s >= -1e-10):
+                s = np.maximum(s, 0)
                 return s
             new = np.argwhere(s < 0).flat
             Z = Z | set(new)
             s[list(Z)] = 0
             c = (np.sum(s) - l1) / (len(x) - len(Z))
             s -= c
+            i += 1
+            #stop = (np.abs(SparseHoyer._get_sparsity(s) - self.sparsity)
         print('PROJECTION UNSUCCESSFUL')
         return s
 
-    def get_alpha(s, m, l2):
+    def _get_alpha(s, m, l2):
         '''
         solves the quadratic equation for alpha
         '''
@@ -104,3 +112,12 @@ class SparseHoyer(Solver):
         c = np.sum(m * m) - l2 ** 2
         alpha = (-b + np.sqrt(b ** 2 - 4 * a * c)) / (2 * a)
         return alpha
+
+    def _get_sparsity(v):
+        '''
+        problem
+        '''
+        l2 = np.linalg.norm(v)
+        l1 = np.linalg.norm(v, ord=1)
+        n = len(v)
+        return (np.sqrt(n) - l1/l2) / (np.sqrt(n) - 1)

@@ -8,7 +8,7 @@ class SparseANLSBPP(Solver):
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
         self.name = 'sparse_anls_bpp'
-        self.alpha = config['alpha'] / 10
+        self.alpha = config['alpha'] / 100
         print('SparseANLSBPP solver created!')
 
     def _update_WH(self, W, H):
@@ -18,23 +18,25 @@ class SparseANLSBPP(Solver):
         WT, _ = SparseANLSBPP.nnls(H.T, self.X.T)
 
         W = WT.T
-        vect = np.sqrt(self.alpha) * np.ones(self.r)
+        normalization = np.linalg.norm(W, axis=0).reshape((1, self.r))
+        W /= normalization
+        H *= normalization.T
+        vect = np.sqrt(2 * self.alpha) * np.ones(self.r)
         vect = np.reshape(vect, (1, self.r))
         A = np.concatenate((W, vect), axis=0)
         B = np.concatenate((self.X, np.zeros((1, self.m))), axis=0)
         H, _ = SparseANLSBPP.nnls(A, B)
-        #print(H)
-        normalization = np.linalg.norm(W, axis=0).reshape((1, self.r))
-        #print(normalization)
-        W /= normalization
-        H *= normalization.T
+
+        #normalization = np.linalg.norm(W, axis=0).reshape((1, self.r))
+        #W /= normalization
+        #H *= normalization.T
         return W, H
 
     def _update_objective(self, W, H):
         '''
         calculates the value of the objective function
         '''
-        a = np.linalg.norm(np.matmul(W, H) - self.X) + self.alpha * np.linalg.norm(np.linalg.norm(H, axis=1, ord=1)) ** 2
+        a = 1/2 * np.linalg.norm(np.matmul(W, H) - self.X) ** 2 + self.alpha * np.linalg.norm(np.linalg.norm(H, axis=0, ord=1)) ** 2
         self.objective.append(a)
 
     def divide(F_list, G_list, CTC, CTB):

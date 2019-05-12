@@ -9,9 +9,9 @@ from lib.experiment import Experiment
 def main(config, args, experiment_config={}):
     X, ground_truth = get_data(config)
     print('Data loaded')
-    #compute_nmf(config, X)
-    experiment = Experiment(config, X, experiment_config)
-    experiment()
+    compute_nmf(config, X)
+    #experiment = Experiment(config, X, experiment_config)
+    #experiment()
     return 0
 
 
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # load config file
     config = yaml.safe_load(open('./config/' + args.config + '.yml'))
     experiment_config = yaml.safe_load(open('./experiments/' + args.experiment_config + '.yml'))
-    config['solver'] = 'mu'
+    config['solver'] = 'sparse_hoyer'
     config['dataset'] = 'face'
     main(config, args, experiment_config)
 

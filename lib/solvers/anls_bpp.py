@@ -30,7 +30,7 @@ class ANLSBPP(Solver):
         '''
         calculates the value of the objective function
         '''
-        a = np.linalg.norm(np.matmul(W, H) - self.X)
+        a = 1/2 * np.linalg.norm(np.matmul(W, H) - self.X) ** 2
         self.objective.append(a)
 
     def divide(F_list, G_list, CTC, CTB):

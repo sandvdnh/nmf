@@ -6,14 +6,23 @@ log:
   - objective
   - error
   - iteration
-r: 5
-verbose: 20
-iters: 1000
+  - rel_error
+  - L1_H
+  - L0_H
+print:
+  - iteration
+  - rel_error
+  - objective
+  - L1_H
+  - L0_H
+r: 7
+verbose: 1
+iters: 500
 eps: 0
 delay: 10
 #eta: 0
 #beta: 0.1
-alpha: 1
-sparsity: 0.9
-mu: 0.1
+alpha: 10
+sparsity: 0.95
+mu: 0.00001
 ...

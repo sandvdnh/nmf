@@ -3,6 +3,12 @@ import re
 import os
 import glob
 import math
+from lib.solvers.anls_bpp import ANLSBPP
+from lib.solvers.sparse_anls_bpp import SparseANLSBPP
+from lib.solvers.hals import HALS
+from lib.solvers.mu import MU
+from lib.solvers.sparse_hals import SparseHALS
+from lib.solvers.sparse_hoyer import SparseHoyer
 
 
 def synthetic(config):
@@ -84,4 +90,15 @@ def compute_nmf(config, X):
     elif config['solver'] == 'mu':
         solver = MU(config, X)
         solver.solve()
+    elif config['solver'] == 'sparse_anls_bpp':
+        solver = SparseANLSBPP(config, X)
+        solver.solve()
+    elif config['solver'] == 'sparse_hoyer':
+        solver = SparseHoyer(config, X)
+        solver.solve()
+    elif config['solver'] == 'sparse_hals':
+        solver = SparseHALS(config, X)
+        solver.solve()
     return 0
+
+

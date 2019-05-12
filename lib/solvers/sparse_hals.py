@@ -9,7 +9,7 @@ class SparseHALS(Solver):
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
         self.name = 'sparse_hals'
-        self.alpha = config['alpha']
+        self.alpha = 50 * config['alpha']
         print('Sparse HALS solver created!')
 
     def _update_WH(self, W, H):
@@ -39,5 +39,5 @@ class SparseHALS(Solver):
         '''
         calculates the value of the objective function
         '''
-        a = np.linalg.norm(np.matmul(W, H) - self.X) + self.alpha * np.linalg.norm(np.linalg.norm(H, axis=1, ord=1)) ** 2
+        a = 1/2 * np.linalg.norm(np.matmul(W, H) - self.X) ** 2 + self.alpha * np.linalg.norm(np.linalg.norm(H, axis=1, ord=1))
         self.objective.append(a)
