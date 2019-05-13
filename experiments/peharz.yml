@@ -1,0 +1,16 @@
+---
+name: test
+solver_list:
+  - sparse_hals
+  - sparse_anls_bpp
+  - sparse_hoyer
+features:
+  - L0_H
+  - L1_H
+  - objective
+  - error
+figsize:
+  - 6.4
+  - 4
+across_time: False
+...

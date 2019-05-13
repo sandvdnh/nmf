@@ -9,7 +9,7 @@ class SparseHALS(Solver):
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
         self.name = 'sparse_hals'
-        self.alpha = 50 * config['alpha']
+        self.alpha = 10 * config['alpha']
         print('Sparse HALS solver created!')
 
     def _update_WH(self, W, H):

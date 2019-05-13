@@ -29,12 +29,13 @@ class SparseHoyer(Solver):
             H = self.project(H)
 
             objective = np.linalg.norm(np.matmul(W, H) - self.X)
-            if self.objective[-1] < objective and mu > 1e-50:
+            if self.objective[-1] < objective and self.mu > 1e-50:
                 self.mu /= 2
             elif self.objective[-1] > objective:
                 break
             else:
                 print('CONVERGED...')
+                return W, H
         return W, H
 
     def _update_objective(self, W, H):

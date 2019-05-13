@@ -67,7 +67,7 @@ class Solver(object, metaclass=ABCMeta):
 
         self.solution = (W, H)
         self.output['objective'] = self.objective
-        print(H)
+        #print(H)
 
 
     @abstractmethod

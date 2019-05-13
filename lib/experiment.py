@@ -59,6 +59,19 @@ class Experiment(object):
             data_entry = [solver.output[feature] for solver in self.solvers]
             self.data.append(data_entry)
 
+    def get_summary(self):
+        '''
+        function which returns the best values after all algorithms have finished
+        '''
+        summary = dict()
+        for feature in self.features[:-2]:
+            values = [solver.output[feature][-1] for solver in self.solvers]
+            summary[feature] = values
+
+        summary['W'] = [solver.solution[0] for solver in self.solvers]
+        summary['H'] = [solver.solution[1] for solver in self.solvers]
+        return summary
+
 
     def _plot_feature(self, feature):
         '''

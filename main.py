@@ -4,14 +4,17 @@ import yaml
 import numpy as np
 from lib.utils import get_data, compute_nmf
 from lib.experiment import Experiment
+from scripts import peharz_experiment
 
 
 def main(config, args, experiment_config={}):
     X, ground_truth = get_data(config)
     print('Data loaded')
-    compute_nmf(config, X)
+    #compute_nmf(config, X)
     #experiment = Experiment(config, X, experiment_config)
     #experiment()
+
+    peharz_experiment()
     return 0
 
 
