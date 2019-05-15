@@ -20,6 +20,8 @@ class MU(Solver):
         h = H
         v = self.X
         wTv = np.matmul(w.T, v)
+        print(w, v)
+        print('wTv: ', wTv)
         wTwh = np.matmul(np.matmul(w.T, w), h)
         h = h * wTv / wTwh
         vhT = np.matmul(v, h.T)

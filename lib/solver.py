@@ -106,10 +106,14 @@ class Solver(object, metaclass=ABCMeta):
         W = np.abs(np.random.normal(loc=0, scale=2, size=(self.n, self.r)))
         WTW = np.matmul(W.T, W)
         H = np.matmul(np.matmul(np.linalg.inv(WTW), W.T), self.X)
-        H = H.clip(min=0)
+        if self.config['clip']:
+            H = H.clip(min=0)
+        H = np.abs(H)
         HHT = np.matmul(H, H.T)
         W = np.transpose(np.matmul(np.matmul(np.linalg.inv(HHT), H), self.X.T))
-        W = W.clip(min=0)
+        if self.config['clip']:
+            W = W.clip(min=0)
+        W = np.abs(W)
         W /= np.linalg.norm(W, axis=0)
         return W, H
 

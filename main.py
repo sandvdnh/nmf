@@ -10,9 +10,11 @@ from scripts import peharz_experiment
 
 
 def main(config, args, experiment_config={}):
-    X, ground_truth = get_data(config)
-    print('Data loaded')
-    compute_nmf(config, X)
+    #X, ground_truth = get_data(config)
+    #W = ground_truth[0]
+    #H = ground_truth[1]
+    #print('Data loaded, rank of X: ', np.linalg.matrix_rank(X))
+    #compute_nmf(config, X)
 
     #a = np.identity(6)
     ##print(Solver.get_nonzeros(a))
@@ -33,11 +35,10 @@ def main(config, args, experiment_config={}):
     #print(vec)
     #print(H)
     #print(int(np.ceil((Solver.get_nonzeros(H) - l0) * n)))
-    
     #experiment = Experiment(config, X, experiment_config)
     #experiment()
 
-    #peharz_experiment()
+    peharz_experiment()
     return 0
 
 
@@ -50,7 +51,7 @@ if __name__ == '__main__':
     # load config file
     config = yaml.safe_load(open('./config/' + args.config + '.yml'))
     experiment_config = yaml.safe_load(open('./experiments/' + args.experiment_config + '.yml'))
-    config['solver'] = 'sparse_l0_hals'
-    config['dataset'] = 'face'
+    config['solver'] = 'anls_bpp'
+    config['dataset'] = 'synthetic'
     main(config, args, experiment_config)
 

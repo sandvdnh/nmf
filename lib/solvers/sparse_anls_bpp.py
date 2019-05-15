@@ -8,7 +8,7 @@ class SparseANLSBPP(Solver):
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
         self.name = 'sparse_anls_bpp'
-        self.alpha = config['alpha'] / 100
+        self.alpha = config['alpha'] / 500
         print('SparseANLSBPP solver created!')
 
     def _update_WH(self, W, H):

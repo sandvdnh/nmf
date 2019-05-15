@@ -1,16 +1,22 @@
 ---
 name: test
-solver_list:
+solver_list: # don't use MU here
   - sparse_hals
   - sparse_anls_bpp
-  - sparse_hoyer
+  - sparse_l0_hals
 features:
   - L0_H
   - L1_H
   - objective
   - error
+plot:
+  - error
+  - time
 figsize:
   - 6.4
   - 4
 across_time: False
+n: 200
+m: 300
+r: 5
 ...

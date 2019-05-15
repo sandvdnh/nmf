@@ -10,6 +10,7 @@ from lib.solvers.sparse_hals import SparseHALS
 from lib.solvers.sparse_anls_bpp import SparseANLSBPP
 from lib.solvers.sparse_hoyer import SparseHoyer
 from lib.solvers.sparse_l0_hals import SparseL0HALS
+from lib.solvers.sparse_hals1 import SparseHALS1
 
 class Experiment(object):
     '''
@@ -62,10 +63,10 @@ class Experiment(object):
 
     def get_summary(self):
         '''
-        function which returns the best values after all algorithms have finished
+        function which returns the last values after all algorithms have finished
         '''
         summary = dict()
-        for feature in self.features[:-2]:
+        for feature in self.features:
             values = [solver.output[feature][-1] for solver in self.solvers]
             summary[feature] = values
 

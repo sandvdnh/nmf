@@ -10,6 +10,7 @@ from lib.solvers.mu import MU
 from lib.solvers.sparse_hals import SparseHALS
 from lib.solvers.sparse_hoyer import SparseHoyer
 from lib.solvers.sparse_l0_hals import SparseL0HALS
+from lib.solvers.sparse_hals1 import SparseHALS1
 
 
 def synthetic(config):
@@ -26,7 +27,7 @@ def synthetic(config):
     h = np.abs(np.random.normal(size=(r, m), scale=2, loc=3))
     v = np.matmul(w, h)
     ground_truth = (w, h)
-    v = np.abs(np.random.normal(size=(n, m), scale=2, loc=5))
+    #v = np.abs(np.random.normal(size=(n, m), scale=2, loc=5))
     return v, ground_truth
 
 
@@ -102,6 +103,9 @@ def compute_nmf(config, X):
         solver.solve()
     elif config['solver'] == 'sparse_l0_hals':
         solver = SparseL0HALS(config, X)
+        solver.solve()
+    elif config['solver'] == 'sparse_hals1':
+        solver = SparseHALS1(config, X)
         solver.solve()
     return 0
 
