@@ -151,7 +151,7 @@ class Solver(object, metaclass=ABCMeta):
         '''
         Computes the (normalized) L0 norm of a matrix M
         '''
-        nonzero = np.nonzero(np.abs(M) > 1e-10)[0].size
+        nonzero = np.nonzero(np.abs(M) > 1e-12)[0].size
         n = np.prod(M.shape)
         l0 = nonzero / n
         return l0

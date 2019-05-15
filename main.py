@@ -4,17 +4,40 @@ import yaml
 import numpy as np
 from lib.utils import get_data, compute_nmf
 from lib.experiment import Experiment
+from lib.solver import Solver
+from lib.solvers.sparse_l0_hals import SparseL0HALS
 from scripts import peharz_experiment
 
 
 def main(config, args, experiment_config={}):
     X, ground_truth = get_data(config)
     print('Data loaded')
-    #compute_nmf(config, X)
+    compute_nmf(config, X)
+
+    #a = np.identity(6)
+    ##print(Solver.get_nonzeros(a))
+    #l0 = 0.1
+    #H = a
+    #shape = H.shape
+    #n = np.prod(H.shape)
+    #to_zero = int(np.ceil((Solver.get_nonzeros(H) * n - l0 * n)))
+    #print(to_zero)
+    #if to_zero > 0:
+    #    vec = H.flatten()
+    #    print(len(vec))
+    #    indices = vec.copy().argsort()[:to_zero]
+    #    print(indices)
+    #    print(len(indices))
+    #    vec[indices] = 0
+    #    H = np.reshape(vec, shape)
+    #print(vec)
+    #print(H)
+    #print(int(np.ceil((Solver.get_nonzeros(H) - l0) * n)))
+    
     #experiment = Experiment(config, X, experiment_config)
     #experiment()
 
-    peharz_experiment()
+    #peharz_experiment()
     return 0
 
 
@@ -27,7 +50,7 @@ if __name__ == '__main__':
     # load config file
     config = yaml.safe_load(open('./config/' + args.config + '.yml'))
     experiment_config = yaml.safe_load(open('./experiments/' + args.experiment_config + '.yml'))
-    config['solver'] = 'sparse_hoyer'
+    config['solver'] = 'sparse_l0_hals'
     config['dataset'] = 'face'
     main(config, args, experiment_config)
 

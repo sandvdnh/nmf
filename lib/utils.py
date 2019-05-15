@@ -9,6 +9,7 @@ from lib.solvers.hals import HALS
 from lib.solvers.mu import MU
 from lib.solvers.sparse_hals import SparseHALS
 from lib.solvers.sparse_hoyer import SparseHoyer
+from lib.solvers.sparse_l0_hals import SparseL0HALS
 
 
 def synthetic(config):
@@ -98,6 +99,9 @@ def compute_nmf(config, X):
         solver.solve()
     elif config['solver'] == 'sparse_hals':
         solver = SparseHALS(config, X)
+        solver.solve()
+    elif config['solver'] == 'sparse_l0_hals':
+        solver = SparseL0HALS(config, X)
         solver.solve()
     return 0
 

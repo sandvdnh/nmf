@@ -9,6 +9,7 @@ from lib.solvers.mu import MU
 from lib.solvers.sparse_hals import SparseHALS
 from lib.solvers.sparse_anls_bpp import SparseANLSBPP
 from lib.solvers.sparse_hoyer import SparseHoyer
+from lib.solvers.sparse_l0_hals import SparseL0HALS
 
 class Experiment(object):
     '''
