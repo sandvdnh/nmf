@@ -9,6 +9,7 @@ class ANLSBPP(Solver):
     def __init__(self, config, X):
         Solver.__init__(self, config, X)
         self.name = 'anls_bpp'
+        #self.config['iters'] = round(self.config['iters'] / 80000)
         print('ANLSBPP solver created!')
 
     def _update_WH(self, W, H):

@@ -16,19 +16,19 @@ print:
   - L1_H
   - L0_H
 r: 5
-verbose: 80
-iters: 100
+verbose: 1
+iters: 3000
 eps: 0
 delay: 10
 clip: True
 #eta: 0
 #beta: 0.1
-alpha: 0.1
+alpha: 1
 sparsity: 0.95
 mu: 0.00001
 project_l0: 0.3 # for SparseL0HALS
 alpha1: 0.01 #for SparseHALS1
 n: 200
 m: 300
-r: 5
+r: 8
 ...

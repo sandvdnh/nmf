@@ -3,6 +3,7 @@ import re
 import os
 import glob
 import math
+from scipy.io import loadmat
 from lib.solvers.anls_bpp import ANLSBPP
 from lib.solvers.sparse_anls_bpp import SparseANLSBPP
 from lib.solvers.hals import HALS
@@ -44,6 +45,18 @@ def face(config):
         X[:, i] = a.copy()
     return X, -1
 
+def classic(config):
+    '''
+    loads classic in ./data/classic/
+    '''
+    path = os.path.join(config['path'], 'classic')
+    path = os.path.join(path, '*.mat')
+    files = glob.glob(path)
+    classic = np.loadtxt(files[0])
+    print(classic.shape)
+    return classic, -1
+
+
 
 def pgmread(filename):
     """  This function reads Portable GrayMap (PGM) image files and returns
@@ -76,6 +89,8 @@ def get_data(config):
         X, ground_truth = synthetic(config)
     if config['dataset'] == 'face':
         X, ground_truth = face(config)
+    if config['dataset'] == 'classic':
+        X, ground_truth = classic(config)
     return X, ground_truth
 
 

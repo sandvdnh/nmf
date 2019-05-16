@@ -21,5 +21,5 @@ across_time: False
 n: 20
 m: 30
 r: 5
-repetitions: 20
+repetitions: 5
 ...

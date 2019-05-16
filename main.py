@@ -6,7 +6,7 @@ from lib.utils import get_data, compute_nmf
 from lib.experiment import Experiment
 from lib.solver import Solver
 from lib.solvers.sparse_l0_hals import SparseL0HALS
-from scripts import peharz_experiment
+from scripts import peharz_experiment, face_experiment, complexity_experiment, classic_experiment
 
 
 def main(config, args, experiment_config={}):
@@ -40,6 +40,9 @@ def main(config, args, experiment_config={}):
     #experiment()
 
     peharz_experiment()
+    #face_experiment()
+    #complexity_experiment()
+    #classic_experiment()
     return 0
 
 

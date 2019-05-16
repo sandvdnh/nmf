@@ -32,7 +32,10 @@ class Solver(object, metaclass=ABCMeta):
         r = self.config['r']
         eps = self.config['eps']
         delay = self.config['delay']
-        iters = self.config['iters']
+        if self.name == 'anls_bpp':
+            iters = self.config['iters'] / 100
+        else:
+            iters = self.config['iters']
 
         # initialize H
         W, H = self.init_WH()

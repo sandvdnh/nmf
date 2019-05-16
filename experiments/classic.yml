@@ -1,0 +1,19 @@
+---
+name: test
+solver_list: # don't use MU here
+  - hals
+  - mu
+  - anls_bpp
+    #- sparse_hoyer
+    #- sparse_anls_bpp
+features:
+  #- L0_H
+  #- L1_H
+  - objective
+  - rel_error
+across_time: False
+figsize:
+  - 6
+  - 6
+repetitions: 0
+...

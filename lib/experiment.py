@@ -61,22 +61,24 @@ class Experiment(object):
         Execute all solvers, and store the relevant output in self.data
         '''
         summary_list = []
-        for i in range(self.repetitions):
+        if self.repetitions > 1:
+            for i in range(self.repetitions):
+                for solver in self.solvers:
+                    print('Executing ', solver.name, '...')
+                    solver.solve()
+                summary_list.append(self.get_summary())
+                # reset solvers
+                for solver in self.solvers:
+                    solver.output = {}
+                    solver.objective = []
+                    for key in solver.config['log']:
+                        solver.output[key] = []
+            summary = self._mean_summary(summary_list)
+            self.summary = summary
+        else:
             for solver in self.solvers:
                 print('Executing ', solver.name, '...')
                 solver.solve()
-            summary_list.append(self.get_summary())
-            # reset solvers
-            for solver in self.solvers:
-                solver.output = {}
-                solver.objective = []
-                for key in solver.config['log']:
-                    solver.output[key] = []
-
-        if self.repetitions > 1:
-            summary = self._mean_summary(summary_list)
-            self.summary = summary
-
 
         for feature in self.features[:-2]:
             data_entry = [solver.output[feature] for solver in self.solvers]
@@ -88,7 +90,13 @@ class Experiment(object):
         '''
         summary = dict()
         for feature in self.features:
-            values = [solver.output[feature][-1] for solver in self.solvers]
+            values = []
+            for solver in self.solvers:
+                index = np.argmin(np.array(solver.output['rel_error']))
+                a = solver.output[feature][index]
+                values.append(a)
+                #values = [solver.output[feature][index] for solver in self.solvers]
+            #values = [np.min(np.array(solver.output[feature][-1])) for solver in self.solvers]
             summary[feature] = values
 
         summary['W'] = [solver.solution[0] for solver in self.solvers]
