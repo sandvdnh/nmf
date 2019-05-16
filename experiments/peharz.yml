@@ -1,10 +1,10 @@
 ---
 name: test
 solver_list: # don't use MU here
+  - sparse_anls_bpp
   - sparse_hals
   - sparse_hals1
   - sparse_l0_hals
-    #- sparse_anls_bpp
 features:
   - L0_H
   - L1_H
@@ -18,8 +18,8 @@ figsize:
   - 6.4
   - 4
 across_time: False
-n: 20
-m: 30
-r: 5
-repetitions: 5
+n: 200
+m: 300
+r: 9
+repetitions: 10
 ...

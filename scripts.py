@@ -15,14 +15,21 @@ from lib.solvers.sparse_anls_bpp import SparseANLSBPP
 from lib.solvers.sparse_hoyer import SparseHoyer
 
 #rc('text', usetex=True)
-
-#blue,  orange, green, pink, light blue
-COLORS = ['#FC6554', '#65D643', '#1CA4FC', '#ED62A7', '#2FE6CF']
+#'#1CA4FC',  blue
+#blue,  orange,, light blue,  pink
+COLORS = ['#1CA4FC', '#FC6554', '#2FE6CF', '#ED62A7']
 Y_LABELS = {
         'L0_H': '$\ell_0(H)$',
         'L1_H': '$\ell_1(H)$',
         'rel_error': 'Relative error'
         }
+LABELS = {
+        'sparse_hals': 'HALS-sparse1',
+        'sparse_hals1': 'HALS-sparse2',
+        'sparse_l0_hals': 'HALS-sparse3',
+        'sparse_anls_bpp': 'ANLS-BPP-sparse'
+        }
+
 
 def generate_synthetic_data(n, m, r, l0):
     '''
@@ -62,7 +69,7 @@ def peharz_experiment():
     n = experiment_config['n']
     m = experiment_config['m']
     r = experiment_config['r']
-    l0 = np.array([0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1])
+    l0 = np.array([0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     X, W, H = generate_synthetic_data(n, m, r, l0)
     l0_axis = np.array([Solver.get_nonzeros(H[:, :, i]) for i in range(len(l0))])
     print('Data generated, rank of X: ', np.linalg.matrix_rank(X[:, :, 0]))
@@ -80,23 +87,22 @@ def peharz_experiment():
             a = summary[feature]
             a = np.array(a).reshape((len(a), 1))
             total[i] = np.hstack((total[i], a))
-
     print(total)
     # plotting
     for i, feature in enumerate(experiment_config['plot']):
-        fig = plt.figure(figsize=(6, 4))
+        fig = plt.figure(figsize=(4, 4))
         ax0 = fig.add_subplot(111)
         #color = ['r', 'g', 'b', 'cyan', 'k']
         ax0.set_xlabel('$\ell_0 (H_o )$')
         for j in range(total[i].shape[0]):
-            ax0.plot(l0_axis, total[i][j, :], color=COLORS[j], label = solvers[j], linestyle='--', markersize=15, marker='.')
+            ax0.plot(l0_axis, total[i][j, :], color=COLORS[j], label = LABELS[solvers[j]], linestyle='--', markersize=15, marker='.')
         ax0.yaxis.set_major_formatter(FormatStrFormatter('%g'))
         ax0.xaxis.set_major_formatter(FormatStrFormatter('%g'))
         ax0.get_yaxis().set_tick_params(which='both', direction='in')
         ax0.get_xaxis().set_tick_params(which='both', direction='in')
         ax0.grid()
         ax0.set_ylabel(Y_LABELS[feature])
-        ax0.legend()
+        #ax0.legend()
         #ax0.set_xscale('log')
         #ax0.set_yscale('log')
         s = '_' + str(n) + '_' + str(m) + '_' + str(r)
