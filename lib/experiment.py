@@ -41,8 +41,14 @@ class Experiment(object):
                 solver = SparseANLSBPP(config, X)
             elif method == 'sparse_hoyer':
                 solver = SparseHoyer(config, X)
+            elif method == 'sparse_l0_hals':
+                solver = SparseL0HALS(config, X)
+                #solver.name = 'l0_projection'
+            elif method == 'sparse_hals1':
+                solver = SparseHALS1(config, X)
             self.solvers.append(solver)
         self.features = features + ['time', 'iteration']
+        self.repetitions = experiment_config['repetitions']
         self.data = [] # each list in this list corresponds to a feature in self.features
 
         self.figsize = experiment_config['figsize']
@@ -54,9 +60,24 @@ class Experiment(object):
         '''
         Execute all solvers, and store the relevant output in self.data
         '''
-        for solver in self.solvers:
-            print('Executing ', solver.name, '...')
-            solver.solve()
+        summary_list = []
+        for i in range(self.repetitions):
+            for solver in self.solvers:
+                print('Executing ', solver.name, '...')
+                solver.solve()
+            summary_list.append(self.get_summary())
+            # reset solvers
+            for solver in self.solvers:
+                solver.output = {}
+                solver.objective = []
+                for key in solver.config['log']:
+                    solver.output[key] = []
+
+        if self.repetitions > 1:
+            summary = self._mean_summary(summary_list)
+            self.summary = summary
+
+
         for feature in self.features[:-2]:
             data_entry = [solver.output[feature] for solver in self.solvers]
             self.data.append(data_entry)
@@ -72,6 +93,21 @@ class Experiment(object):
 
         summary['W'] = [solver.solution[0] for solver in self.solvers]
         summary['H'] = [solver.solution[1] for solver in self.solvers]
+        return summary
+
+
+    def _mean_summary(self, summary_list):
+        summary = dict()
+        for feature in self.features[:-2]:
+            summary[feature] = [None] * len(self.solvers)
+
+        for k in range(len(self.solvers)):
+            for i, feature in enumerate(self.features[:-2]):
+                value = 0
+                for j in range(len(summary_list)):
+                    value += summary_list[j][feature][k]
+                value /= len(summary_list)
+                summary[feature][k] = value
         return summary
 
 

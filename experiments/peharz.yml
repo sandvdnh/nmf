@@ -2,21 +2,24 @@
 name: test
 solver_list: # don't use MU here
   - sparse_hals
-  - sparse_anls_bpp
+  - sparse_hals1
   - sparse_l0_hals
+    #- sparse_anls_bpp
 features:
   - L0_H
   - L1_H
   - objective
-  - error
+  - rel_error
 plot:
-  - error
-  - time
+  - L1_H
+  - L0_H
+  - rel_error
 figsize:
   - 6.4
   - 4
 across_time: False
-n: 200
-m: 300
+n: 20
+m: 30
 r: 5
+repetitions: 20
 ...

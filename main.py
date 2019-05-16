@@ -11,8 +11,9 @@ from scripts import peharz_experiment
 
 def main(config, args, experiment_config={}):
     #X, ground_truth = get_data(config)
-    #W = ground_truth[0]
-    #H = ground_truth[1]
+    #if ground_truth is not -1:
+    #    W = ground_truth[0]
+    #    H = ground_truth[1]
     #print('Data loaded, rank of X: ', np.linalg.matrix_rank(X))
     #compute_nmf(config, X)
 
@@ -51,7 +52,7 @@ if __name__ == '__main__':
     # load config file
     config = yaml.safe_load(open('./config/' + args.config + '.yml'))
     experiment_config = yaml.safe_load(open('./experiments/' + args.experiment_config + '.yml'))
-    config['solver'] = 'anls_bpp'
-    config['dataset'] = 'synthetic'
+    config['solver'] = 'sparse_hoyer'
+    config['dataset'] = 'face'
     main(config, args, experiment_config)
 

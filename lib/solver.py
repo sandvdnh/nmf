@@ -42,7 +42,7 @@ class Solver(object, metaclass=ABCMeta):
         elapsed = 0
         self._update_objective(W, H)
         self.log(W, H, elapsed, i)
-        self._print()
+        self._print(0)
         print('NOTHING HAPPENED YET')
         while not stop:
             if eps > 0:
@@ -59,7 +59,7 @@ class Solver(object, metaclass=ABCMeta):
                 print('WARNING: OBJECTIVE FUNCTION INCREASED', self.objective[-2], self.objective[-1])
             elapsed = time.time() - start
             self.log(W, H, elapsed, i)
-            self._print()
+            self._print(i)
             #if self.config['verbose']:
             #    if not i % self.config['verbose']:
             #        print('ITERATION ', i, '  RELATIVE ERROR: ', self.output['rel_error'][-1], '  OBJECTIVE: ', self.objective[-1])
@@ -86,16 +86,17 @@ class Solver(object, metaclass=ABCMeta):
         pass
 
 
-    def _print(self):
+    def _print(self, i):
         '''
         Function which prints out requested output based on config['print']
         '''
-        line = '=========\n'
-        for key in self.config['print']:
-            a = self.output[key][-1]
-            s = key.upper() + ':  ' + str(a) + '\n'
-            line += s
-        print(line)
+        if not i % self.config['verbose']:
+            line = '=========\n'
+            for key in self.config['print']:
+                a = self.output[key][-1]
+                s = key.upper() + ':  ' + str(a) + '\n'
+                line += s
+            print(line)
         return 0
 
 

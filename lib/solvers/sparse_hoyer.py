@@ -53,12 +53,15 @@ class SparseHoyer(Solver):
         W = np.abs(np.random.normal(loc=0, scale=2, size=(self.n, self.r)))
         WTW = np.matmul(W.T, W)
         H = np.matmul(np.matmul(np.linalg.inv(WTW), W.T), self.X)
-        H = H.clip(min=0)
+        if self.config['clip']:
+            H = H.clip(min=0)
+        H = self.project(H)
         HHT = np.matmul(H, H.T)
         W = np.transpose(np.matmul(np.matmul(np.linalg.inv(HHT), H), self.X.T))
-        W = W.clip(min=0)
+        if self.config['clip']:
+            W = W.clip(min=0)
         W /= np.linalg.norm(W, axis=0)
-        H = self.project(H)
+        #H = self.project(H)
         return W, H
 
     def project(self, M):
@@ -86,7 +89,7 @@ class SparseHoyer(Solver):
         Z = set()
         all_ = set(range(len(x)))
         i = 0
-        while i <= 3 * len(x):
+        while i <= len(x):
             m = np.zeros(len(x))
             m[list(all_ - Z)] = l1 / (len(x) - len(Z))
             alpha = SparseHoyer._get_alpha(s, m, l2)
@@ -101,7 +104,8 @@ class SparseHoyer(Solver):
             s -= c
             i += 1
             #stop = (np.abs(SparseHoyer._get_sparsity(s) - self.sparsity)
-        print('PROJECTION UNSUCCESSFUL')
+        print('PROJECTION UNSUCCESSFUL, clipping negative values')
+        #s = s.clip(min=1e-10)
         return s
 
     def _get_alpha(s, m, l2):

@@ -11,6 +11,7 @@ class SparseL0HALS(Solver):
         self.name = 'l0_projection'
         self.l0 = config['project_l0']
         print('SparseL0 solver created!')
+        print(self.name)
 
     def _update_WH(self, W, H):
         A = W

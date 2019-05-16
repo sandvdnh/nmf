@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
+from matplotlib import rc
 import time
 import yaml
 from lib.experiment import Experiment
@@ -12,6 +13,15 @@ from lib.solvers.sparse_hals import SparseHALS
 from lib.solvers.sparse_anls_bpp import SparseANLSBPP
 from lib.solvers.sparse_hoyer import SparseHoyer
 
+#rc('text', usetex=True)
+
+#green, orange, blue, pink, light blue
+COLORS = ['#65D643', '#FC6554', '#1CA4FC', '#ED62A7', '#2FE6CF']
+Y_LABELS = {
+        'L0_H': '$\ell_0(H)$',
+        'L1_H': '$\ell_1(H)$',
+        'rel_error': 'Relative error'
+        }
 
 def generate_synthetic_data(n, m, r, l0):
     '''
@@ -21,7 +31,6 @@ def generate_synthetic_data(n, m, r, l0):
     length = len(l_list)
     W = np.abs(np.random.normal(2, scale=3, size=(n, r, len(l_list))))
     W /= np.linalg.norm(W, axis = 0)
-    print(W[:, :, 0])
 
     H = np.zeros((r, m, length))
     X = np.zeros((n, m, length))
@@ -52,38 +61,41 @@ def peharz_experiment():
     n = experiment_config['n']
     m = experiment_config['m']
     r = experiment_config['r']
-    l0 = np.array([0.2, 0.3, 0.5, 0.7, 0.9])
+    l0 = np.array([0.2, 0.4, 0.5, 0.7])
     X, W, H = generate_synthetic_data(n, m, r, l0)
+    l0_axis = np.array([Solver.get_nonzeros(H[:, :, i]) for i in range(len(l0))])
     print('Data generated, rank of X: ', np.linalg.matrix_rank(X[:, :, 0]))
     accuracy = np.zeros((len(l0), len(solvers)))
     total = [np.zeros((len(experiment_config['solver_list']), 0)) for feature in experiment_config['plot']]
     for i in range(len(l0)):
         # generate experiment object
+        config['project_l0'] = l0_axis[i]
         experiment = Experiment(config, X[:, :, i], experiment_config)
+        #print([solver.name for solver in experiment.solvers])
         experiment.run()
-        summary = experiment.get_summary()
+        summary = experiment.summary
+        #summary = experiment.get_summary()
         for i, feature in enumerate(experiment_config['plot']):
             a = summary[feature]
             a = np.array(a).reshape((len(a), 1))
             total[i] = np.hstack((total[i], a))
 
-        accuracy[i, :] = np.array(summary['error'])
-
-    # plotting last experiment
+    print(total)
+    # plotting
     for i, feature in enumerate(experiment_config['plot']):
         fig = plt.figure(figsize=(6, 4))
         ax0 = fig.add_subplot(111)
-        color = ['r', 'g', 'b', 'cyan', 'k']
-        ax0.set_xlabel('$\ell_0$')
+        #color = ['r', 'g', 'b', 'cyan', 'k']
+        ax0.set_xlabel('$\ell_0 (H_o )$')
         for j in range(total[i].shape[0]):
-            ax0.plot(l0, total[i][j, :], color=color[j], label = solvers[j], linestyle='--', markersize=20, marker='.')
+            ax0.plot(l0_axis, total[i][j, :], color=COLORS[j], label = solvers[j], linestyle='--', markersize=17, marker='.')
         ax0.yaxis.set_major_formatter(FormatStrFormatter('%g'))
         ax0.xaxis.set_major_formatter(FormatStrFormatter('%g'))
         ax0.get_yaxis().set_tick_params(which='both', direction='in')
         ax0.get_xaxis().set_tick_params(which='both', direction='in')
         ax0.grid()
-        ax0.set_ylabel(feature)
-        #ax0.legend()
+        ax0.set_ylabel(Y_LABELS[feature])
+        ax0.legend()
         #ax0.set_xscale('log')
         #ax0.set_yscale('log')
         s = '_' + str(n) + '_' + str(m) + '_' + str(r)
@@ -95,5 +107,6 @@ def faces_experiment():
     '''
     applies NMF to the faces dataset and generates an image
     '''
+
     pass
 
